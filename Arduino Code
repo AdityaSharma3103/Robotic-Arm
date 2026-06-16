@@ -1,0 +1,175 @@
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
+
+Adafruit_PWMServoDriver pwm(0x40);
+
+// M,gripper,wrist,elbow,shoulder,base
+int angles[5] = {0, 90, 90, 180, 90};
+
+// Channels
+#define GRIPPER_CH   0
+#define WRIST_CH     1
+#define ELBOW_CH     2
+#define SHOULDER_CH  3
+#define BASE_CH      4
+
+// Continuous servo stop pulses
+#define WRIST_STOP   1450
+#define BASE_STOP    1400
+
+//------------------------------------------------
+// Serial Receive
+//------------------------------------------------
+void handleSerial() {
+
+  if (Serial.available()) {
+
+    String data = Serial.readStringUntil('\n');
+    data.trim();
+
+    if (data.startsWith("M")) {
+
+      int a[5];
+
+      sscanf(
+        data.c_str(),
+        "M,%d,%d,%d,%d,%d",
+        &a[0], &a[1], &a[2], &a[3], &a[4]
+      );
+
+      angles[0] = constrain(a[0], 0, 180); // gripper
+      angles[1] = constrain(a[1], 0, 180); // wrist
+      angles[2] = constrain(a[2], 0, 180); // elbow
+
+      // Shoulder TD8120MG (360°)
+      angles[3] = constrain(a[3], 0, 360);
+
+      // Base continuous
+      angles[4] = constrain(a[4], 0, 180);
+    }
+  }
+}
+
+//------------------------------------------------
+// Continuous Servo Helper
+//------------------------------------------------
+void driveContinuous(
+  int channel,
+  int sliderVal,
+  int stopPulse
+) {
+
+  if (sliderVal > 85 && sliderVal < 95) {
+    pwm.writeMicroseconds(channel, stopPulse);
+    return;
+  }
+
+  int pulse = map(
+    sliderVal,
+    0,
+    180,
+    stopPulse - 500,
+    stopPulse + 500
+  );
+
+  pwm.writeMicroseconds(channel, pulse);
+}
+
+//------------------------------------------------
+// Apply Control
+//------------------------------------------------
+void applyControl() {
+
+  // =========================
+  // 1. Gripper (SG90)
+  // =========================
+  pwm.setPWM(
+    GRIPPER_CH,
+    0,
+    map(
+      angles[0],
+      0,
+      180,
+      150,
+      600
+    )
+  );
+
+  // =========================
+  // 2. Wrist (Continuous)
+  // =========================
+  driveContinuous(
+    WRIST_CH,
+    angles[1],
+    WRIST_STOP
+  );
+
+  // =========================
+  // 3. Elbow (Positional)
+  // =========================
+  pwm.writeMicroseconds(
+    ELBOW_CH,
+    map(
+      angles[2],
+      0,
+      180,
+      700,
+      2300
+    )
+  );
+
+  // =========================
+  // 4. Shoulder (TD-8120MG)
+  // =========================
+  pwm.writeMicroseconds(
+    SHOULDER_CH,
+    map(
+      angles[3],
+      0,
+      360,
+      500,
+      2500
+    )
+  );
+
+  // =========================
+  // 5. Base (Continuous)
+  // =========================
+  driveContinuous(
+    BASE_CH,
+    angles[4],
+    BASE_STOP
+  );
+}
+
+//------------------------------------------------
+// Setup
+//------------------------------------------------
+void setup() {
+
+  Serial.begin(115200);
+
+  Wire.begin();
+
+  pwm.begin();
+  pwm.setPWMFreq(50);
+
+  // Home Position
+  angles[0] = 0;     // Gripper open
+  angles[1] = 90;    // Wrist stop
+  angles[2] = 90;    // Elbow center
+  angles[3] = 180;   // Shoulder center (360°)
+  angles[4] = 90;    // Base stop
+
+  Serial.println("READY");
+}
+
+//------------------------------------------------
+// Loop
+//------------------------------------------------
+void loop() {
+
+  handleSerial();
+
+  applyControl();
+}
