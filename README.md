@@ -28,5 +28,5 @@ This project controls an MG996R servo motor using an Arduino microcontroller. Th
 
 # Arm Model
 
-I 3d printed a design i got from the wen here's the link for it
+I 3d printed a design i got from the web here's the link for it
 https://www.printables.com/model/818975-compact-robot-arm-arduino-3d-printed
