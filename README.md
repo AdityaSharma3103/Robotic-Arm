@@ -25,3 +25,8 @@ This project controls an MG996R servo motor using an Arduino microcontroller. Th
 4. One SG90 servo (Gripper)
 5. A servo driver PCA9685
 6. A power supply lipo or lion
+
+# Arm Model
+
+I 3d printed a design i got from the wen here's the link for it
+https://www.printables.com/model/818975-compact-robot-arm-arduino-3d-printed
