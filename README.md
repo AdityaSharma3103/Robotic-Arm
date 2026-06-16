@@ -19,9 +19,9 @@ This project controls an MG996R servo motor using an Arduino microcontroller. Th
 
 # Hardware Requirements
 
-Arduino Uno/ Nano (or any other programming board)
-One 20KG servo motor (shoulder joint)
-Three MG996R servos (Base, Elbow and Wrist)
-One SG90 servo (Gripper)
-A servo driver PCA9685
-A power supply lipo or lion
+1. Arduino Uno/ Nano (or any other programming board)
+2. One 20KG servo motor (shoulder joint)
+3. Three MG996R servos (Base, Elbow and Wrist)
+4. One SG90 servo (Gripper)
+5. A servo driver PCA9685
+6. A power supply lipo or lion
