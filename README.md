@@ -28,7 +28,7 @@ This project controls an MG996R servo motor using an Arduino microcontroller. Th
 
 # Circuit Diagram
 
-<img width="1918" height="1030" alt="image" src="https://github.com/user-attachments/assets/e7543e1e-0359-408f-83ff-5cab34c69f83" />
+<img width="1918" height="1030" alt="image" src="https://github.com/user-attachments/assets/93504cfa-6357-4a3e-8fde-9fc065722328" />
 
 
 # Arm Model
