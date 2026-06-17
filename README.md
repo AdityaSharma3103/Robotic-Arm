@@ -7,15 +7,115 @@ This project controls an MG996R servo motor using an Arduino microcontroller. Th
 
 # How It Works
 
-1. The Arduino initializes communication with the servo using the Servo library.
-2. A PWM signal is sent through the designated signal pin.
-3. The pulse width corresponds to a specific angle:
+The robotic arm is controlled through a web-based dashboard that communicates with an Arduino Uno in real time.
 
-   * 0° position → approximately 1 ms pulse
-   * 90° position → approximately 1.5 ms pulse
-   * 180° position → approximately 2 ms pulse
-4. The MG996R servo's internal controller interprets the PWM signal and rotates the shaft to the requested position.
-5. The servo continuously receives position commands from the Arduino and adjusts its angle accordingly.
+# System Architecture
+
+```
+Web Dashboard
+      ↓
+Node.js Server
+      ↓
+Serial Communication (USB)
+      ↓
+Arduino Uno
+      ↓
+PCA9685 Servo Driver
+      ↓
+Servos (Gripper, Wrist, Elbow, Shoulder, Base)
+```
+
+# Workflow
+
+# 1. User Input
+
+The user controls the robotic arm using sliders on the web dashboard. Each slider corresponds to a specific joint:
+
+* Gripper
+* Wrist
+* Elbow
+* Shoulder
+* Base
+
+### 2. Web Application
+
+The dashboard captures slider values and sends them to a Node.js backend using HTTP requests.
+
+Example:
+
+```json
+{
+  "angles": [30, 90, 120, 180, 90]
+}
+```
+
+### 3. Node.js Backend
+
+The backend receives the joint values and converts them into a serial command that can be understood by the Arduino.
+
+Example:
+
+```
+M,30,90,120,180,90
+```
+
+### 4. Arduino Processing
+
+The Arduino continuously listens for incoming serial commands.
+
+When a command is received:
+
+* Joint values are extracted.
+* Values are validated and constrained to safe operating limits.
+* Appropriate PWM signals are generated.
+
+### 5. Servo Control
+
+The PCA9685 PWM driver generates precise control signals for each servo.
+
+Joint configuration:
+
+| Channel | Joint    | Type                    |
+| ------- | -------- | ----------------------- |
+| CH0     | Gripper  | SG90 Positional Servo   |
+| CH1     | Wrist    | MG996R Continuous Servo |
+| CH2     | Elbow    | MG996R Positional Servo |
+| CH3     | Shoulder | TD-8120MG 360° Servo    |
+| CH4     | Base     | MG996R Continuous Servo |
+
+### 6. Joint Movement
+
+#### Positional Servos
+
+The Gripper, Elbow, and Shoulder move to a specific target angle based on the slider position.
+
+# Continuous Rotation Servos
+
+The Wrist and Base use speed control:
+
+* 90 = Stop
+* Less than 90 = Rotate in one direction
+* Greater than 90 = Rotate in the opposite direction
+
+## Features
+
+* Real-time browser-based control
+* Responsive web dashboard
+* USB serial communication
+* 5 Degrees of Freedom (5-DOF)
+* Support for both positional and continuous rotation servos
+* Custom servo calibration
+* Home and preset positions
+
+## Future Improvements
+
+* Inverse Kinematics
+* Motion Planning
+* Trajectory Generation
+* Position Feedback Sensors
+* 3D Visualization
+* Wireless Control
+* Computer Vision Integration
 
 # Hardware Requirements
 
