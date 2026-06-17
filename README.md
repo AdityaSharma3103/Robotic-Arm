@@ -27,7 +27,7 @@ Servos (Gripper, Wrist, Elbow, Shoulder, Base)
 
 # Workflow
 
-# 1. User Input
+### 1. User Input
 
 The user controls the robotic arm using sliders on the web dashboard. Each slider corresponds to a specific joint:
 
