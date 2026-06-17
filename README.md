@@ -26,6 +26,11 @@ This project controls an MG996R servo motor using an Arduino microcontroller. Th
 5. A servo driver PCA9685
 6. A power supply lipo or lion
 
+# Circuit Diagram
+
+<img width="1918" height="1030" alt="image" src="https://github.com/user-attachments/assets/e7543e1e-0359-408f-83ff-5cab34c69f83" />
+
+
 # Arm Model
 
 I 3d printed a design i got from the web here's the link for it
